@@ -17,7 +17,7 @@ func NewUserHandler(service service.UserService) *UserHandler {
 }
 
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var newUser contract.NewUser
+	var newUser contract.NewUserDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

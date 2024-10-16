@@ -10,7 +10,7 @@ import (
 )
 
 type UserService interface {
-	CreateUser(user *contract.NewUser) error
+	CreateUser(user *contract.NewUserDTO) error
 }
 
 type userService struct {
@@ -21,7 +21,7 @@ func NewUserService(repo repository.UserRepository) UserService {
 	return &userService{userRepo: repo}
 }
 
-func (s *userService) CreateUser(user *contract.NewUser) error {
+func (s *userService) CreateUser(user *contract.NewUserDTO) error {
 	if err := pkg.ValidateStruct(user); err != nil {
 		return err
 	}
