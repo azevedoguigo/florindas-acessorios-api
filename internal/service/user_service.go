@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/contract"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/repository"
@@ -11,6 +13,7 @@ import (
 
 type UserService interface {
 	CreateUser(newUserDTO *contract.NewUserDTO) error
+	Login(loginDTO *contract.LoginDTO) (string, error)
 }
 
 type userService struct {
@@ -44,4 +47,18 @@ func (s *userService) CreateUser(newUserDTO *contract.NewUserDTO) error {
 	}
 
 	return nil
+}
+
+func (s *userService) Login(loginDTO *contract.LoginDTO) (string, error) {
+	user, err := s.userRepo.FindByEmail(loginDTO.Email)
+	if err != nil {
+		return "", errors.New("email not registred")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginDTO.Password))
+	if err != nil {
+		return "", errors.New("invalid password")
+	}
+
+	return pkg.GenerateJWT(user.ID)
 }
