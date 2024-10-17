@@ -11,6 +11,9 @@ type Client struct {
 	UserID      uuid.UUID `json:"user_id"`
 	User        User      `json:"-"`
 	CPF         string    `json:"cpf"`
+	UF          string    `json:"uf"`
+	CEP         string    `json:"cep"`
+	City        string    `json:"city"`
 	Address     string    `json:"address"`
 	PhoneNumber string    `json:"phone_number"`
 	Role        string    `json:"role"`
