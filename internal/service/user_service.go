@@ -10,7 +10,7 @@ import (
 )
 
 type UserService interface {
-	CreateUser(newUserDTO *contract.NewUserDTO) (*domain.User, error)
+	CreateUser(newUserDTO *contract.NewUserDTO) error
 }
 
 type userService struct {
@@ -21,14 +21,14 @@ func NewUserService(repo repository.UserRepository) UserService {
 	return &userService{userRepo: repo}
 }
 
-func (s *userService) CreateUser(newUserDTO *contract.NewUserDTO) (*domain.User, error) {
+func (s *userService) CreateUser(newUserDTO *contract.NewUserDTO) error {
 	if err := pkg.ValidateStruct(newUserDTO); err != nil {
-		return nil, err
+		return err
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUserDTO.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	newUser := &domain.User{
@@ -40,8 +40,8 @@ func (s *userService) CreateUser(newUserDTO *contract.NewUserDTO) (*domain.User,
 
 	err = s.userRepo.Create(newUser)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return newUser, nil
+	return nil
 }
