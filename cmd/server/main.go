@@ -17,11 +17,12 @@ func main() {
 
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
-	userHandler := handler.NewUserHandler(userService)
 
 	clientRepo := repository.NewClientRepository(db)
 	clientService := service.NewClientService(userRepo, clientRepo)
 	clientHadler := handler.NewClientHandler(clientService)
+
+	authHanlder := handler.NewAuthHandler(userService)
 
 	router := chi.NewRouter()
 
@@ -30,12 +31,12 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 
-	router.Route("/users", func(r chi.Router) {
-		r.Post("/", userHandler.CreateUser)
-	})
-
 	router.Route("/clients", func(r chi.Router) {
 		r.Post("/", clientHadler.CreateClient)
+	})
+
+	router.Route("/auth", func(r chi.Router) {
+		r.Post("/", authHanlder.Login)
 	})
 
 	log.Println("Server running in port: 3000")
