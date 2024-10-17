@@ -40,6 +40,7 @@ func (s clientService) CreateClient(newClientDTO *contract.NewClientDTO) error {
 		Name:     newClientDTO.Name,
 		Email:    newClientDTO.Email,
 		Password: string(hashedPassword),
+		Role:     "client",
 	}
 
 	err = s.userRepo.Create(user)
@@ -56,7 +57,6 @@ func (s clientService) CreateClient(newClientDTO *contract.NewClientDTO) error {
 		City:        newClientDTO.City,
 		Address:     newClientDTO.Address,
 		PhoneNumber: newClientDTO.PhoneNumber,
-		Role:        "client",
 	}
 
 	err = s.clientRepo.Create(client)
