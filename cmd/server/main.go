@@ -19,6 +19,10 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
+	clientRepo := repository.NewClientRepository(db)
+	clientService := service.NewClientService(userRepo, clientRepo)
+	clientHadler := handler.NewClientHandler(clientService)
+
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
@@ -28,6 +32,10 @@ func main() {
 
 	router.Route("/users", func(r chi.Router) {
 		r.Post("/", userHandler.CreateUser)
+	})
+
+	router.Route("/clients", func(r chi.Router) {
+		r.Post("/", clientHadler.CreateClient)
 	})
 
 	log.Println("Server running in port: 3000")
