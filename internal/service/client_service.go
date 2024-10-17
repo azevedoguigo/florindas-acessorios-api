@@ -53,6 +53,7 @@ func (s clientService) CreateClient(newClientDTO *contract.NewClientDTO) error {
 		CPF:         newClientDTO.CPF,
 		Address:     newClientDTO.Address,
 		PhoneNumber: newClientDTO.PhoneNumber,
+		Role:        "client",
 	}
 
 	err = s.clientRepo.Create(client)
