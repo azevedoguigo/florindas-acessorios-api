@@ -18,6 +18,10 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
 
+	adminRepo := repository.NewAdminRepository(db)
+	adminService := service.NewAdminService(userRepo, adminRepo)
+	adminHandler := handler.NewAdminHandler(adminService)
+
 	clientRepo := repository.NewClientRepository(db)
 	clientService := service.NewClientService(userRepo, clientRepo)
 	clientHadler := handler.NewClientHandler(clientService)
@@ -30,6 +34,10 @@ func main() {
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
+
+	router.Route("/admins", func(r chi.Router) {
+		r.Post("/", adminHandler.CreateAdmin)
+	})
 
 	router.Route("/clients", func(r chi.Router) {
 		r.Post("/", clientHadler.CreateClient)
