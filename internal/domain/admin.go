@@ -8,8 +8,8 @@ import (
 
 type Admin struct {
 	ID        uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
-	UserID    uuid.UUID `json:"user_id"`
-	User      User      `json:"-"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	UserID    uuid.UUID
+	User      User `gorm:"foreignKey:UserID"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

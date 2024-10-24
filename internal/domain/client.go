@@ -8,14 +8,14 @@ import (
 
 type Client struct {
 	ID          uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
-	UserID      uuid.UUID `json:"user_id"`
-	User        User      `json:"-"`
-	CPF         string    `json:"cpf"`
-	UF          string    `json:"uf"`
-	CEP         string    `json:"cep"`
-	City        string    `json:"city"`
-	Address     string    `json:"address"`
-	PhoneNumber string    `json:"phone_number"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	UserID      uuid.UUID
+	User        User `gorm:"foreignKey:UserID"`
+	CPF         string
+	UF          string
+	CEP         string
+	City        string
+	Address     string
+	PhoneNumber string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
