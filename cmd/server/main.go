@@ -6,7 +6,7 @@ import (
 
 	"github.com/azevedoguigo/florindas-acessorios-api/config"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/handler"
-	userMidlwere "github.com/azevedoguigo/florindas-acessorios-api/internal/middleware"
+	userMiddlwere "github.com/azevedoguigo/florindas-acessorios-api/internal/middleware"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/repository"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/service"
 
@@ -28,6 +28,10 @@ func main() {
 	clientService := service.NewClientService(userRepo, clientRepo)
 	clientHadler := handler.NewClientHandler(clientService)
 
+	categoryRepo := repository.NewCategoryRepository(db)
+	categoryService := service.NewCategoryService(categoryRepo)
+	categoryHandler := handler.NewCategoryHandler(categoryService)
+
 	authHanlder := handler.NewAuthHandler(userService)
 
 	router := chi.NewRouter()
@@ -38,7 +42,7 @@ func main() {
 	router.Use(middleware.Recoverer)
 
 	router.Route("/admins", func(r chi.Router) {
-		r.Use(userMidlwere.AdminMiddleware)
+		r.Use(userMiddlwere.AdminMiddleware)
 
 		r.Post("/", adminHandler.CreateAdmin)
 	})
@@ -49,6 +53,12 @@ func main() {
 
 	router.Route("/auth", func(r chi.Router) {
 		r.Post("/", authHanlder.Login)
+	})
+
+	router.Route("/categories", func(r chi.Router) {
+		r.Use(userMiddlwere.AdminMiddleware)
+
+		r.Post("/", categoryHandler.CreateCategory)
 	})
 
 	log.Println("Server running in port: 3000")
