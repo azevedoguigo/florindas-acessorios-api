@@ -38,7 +38,7 @@ func main() {
 	router.Use(middleware.Recoverer)
 
 	router.Route("/admins", func(r chi.Router) {
-		r.Use(mdwre.AuthMiddleware)
+		r.Use(mdwre.AdminMiddleware)
 
 		r.Post("/", adminHandler.CreateAdmin)
 	})

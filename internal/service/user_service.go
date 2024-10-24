@@ -60,5 +60,5 @@ func (s *userService) Login(loginDTO *contract.LoginDTO) (string, error) {
 		return "", errors.New("invalid password")
 	}
 
-	return pkg.GenerateJWT(user.ID)
+	return pkg.GenerateJWT(user.ID, user.Role)
 }
