@@ -6,8 +6,10 @@ import (
 
 	"github.com/azevedoguigo/florindas-acessorios-api/config"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/handler"
+	mdwre "github.com/azevedoguigo/florindas-acessorios-api/internal/middleware"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/repository"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/service"
+
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 )
@@ -36,6 +38,8 @@ func main() {
 	router.Use(middleware.Recoverer)
 
 	router.Route("/admins", func(r chi.Router) {
+		r.Use(mdwre.AuthMiddleware)
+
 		r.Post("/", adminHandler.CreateAdmin)
 	})
 
