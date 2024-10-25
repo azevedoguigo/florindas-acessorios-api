@@ -73,6 +73,12 @@ func main() {
 		r.Post("/", productHandler.CreateProduct)
 	})
 
+	router.Route("/products", func(r chi.Router) {
+		r.Use(userMiddlwere.AuthMiddleware)
+
+		r.Get("/", productHandler.GetProducts)
+	})
+
 	log.Println("Server running in port: 3000")
 	http.ListenAndServe(":3000", router)
 }

@@ -12,6 +12,7 @@ import (
 
 type ProductService interface {
 	CreateProduct(newProductDTO *contract.NewProductDTO) error
+	GetProducts() ([]domain.Product, error)
 }
 
 type productService struct {
@@ -62,4 +63,13 @@ func (s productService) CreateProduct(newProductDTO *contract.NewProductDTO) err
 	}
 
 	return nil
+}
+
+func (s productService) GetProducts() ([]domain.Product, error) {
+	products, err := s.productRepo.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
