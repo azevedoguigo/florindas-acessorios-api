@@ -32,6 +32,12 @@ func main() {
 	categoryService := service.NewCategoryService(categoryRepo)
 	categoryHandler := handler.NewCategoryHandler(categoryService)
 
+	productImageRepo := repository.NewProductImageRepository(db)
+
+	productRepo := repository.NewProductRepository(db)
+	productService := service.NewProductService(productRepo, productImageRepo)
+	productHandler := handler.NewProductHandler(productService)
+
 	authHanlder := handler.NewAuthHandler(userService)
 
 	router := chi.NewRouter()
@@ -59,6 +65,12 @@ func main() {
 		r.Use(userMiddlwere.AdminMiddleware)
 
 		r.Post("/", categoryHandler.CreateCategory)
+	})
+
+	router.Route("/products-admin", func(r chi.Router) {
+		r.Use(userMiddlwere.AdminMiddleware)
+
+		r.Post("/", productHandler.CreateProduct)
 	})
 
 	log.Println("Server running in port: 3000")
