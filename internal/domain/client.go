@@ -1,12 +1,12 @@
 package domain
 
 import (
-	"time"
-
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Client struct {
+	gorm.Model
 	ID          uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
 	UserID      uuid.UUID
 	User        User `gorm:"foreignKey:UserID"`
@@ -16,6 +16,4 @@ type Client struct {
 	City        string
 	Address     string
 	PhoneNumber string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
 }
