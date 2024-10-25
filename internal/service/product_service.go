@@ -13,6 +13,7 @@ import (
 type ProductService interface {
 	CreateProduct(newProductDTO *contract.NewProductDTO) error
 	GetProducts() ([]domain.Product, error)
+	GetProductByID(id string) (*domain.Product, error)
 }
 
 type productService struct {
@@ -72,4 +73,18 @@ func (s productService) GetProducts() ([]domain.Product, error) {
 	}
 
 	return products, nil
+}
+
+func (s productService) GetProductByID(id string) (*domain.Product, error) {
+	productUUID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, errors.New("invalid product ID")
+	}
+
+	product, err := s.productRepo.GetByID(productUUID)
+	if err != nil {
+		return nil, errors.New("product not found")
+	}
+
+	return product, nil
 }
