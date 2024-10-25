@@ -77,6 +77,7 @@ func main() {
 		r.Use(userMiddlwere.AuthMiddleware)
 
 		r.Get("/", productHandler.GetProducts)
+		r.Get("/{id}", productHandler.GetProductByID)
 	})
 
 	log.Println("Server running in port: 3000")
