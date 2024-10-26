@@ -65,6 +65,7 @@ func main() {
 		r.Use(userMiddlwere.AdminMiddleware)
 
 		r.Post("/", categoryHandler.CreateCategory)
+		r.Get("/", categoryHandler.GetCategories)
 	})
 
 	router.Route("/products-admin", func(r chi.Router) {
