@@ -10,6 +10,7 @@ import (
 
 type CategoryService interface {
 	CreateCategory(newCategoryDTO *contract.NewCategoryDTO) error
+	GetCategories() ([]domain.Category, error)
 }
 
 type categoryService struct {
@@ -36,4 +37,13 @@ func (s categoryService) CreateCategory(newCategoryDTO *contract.NewCategoryDTO)
 	}
 
 	return nil
+}
+
+func (s categoryService) GetCategories() ([]domain.Category, error) {
+	categories, err := s.repo.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	return categories, nil
 }

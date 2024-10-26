@@ -31,3 +31,17 @@ func (h *CategoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request)
 
 	w.WriteHeader(http.StatusCreated)
 }
+
+func (h *CategoryHandler) GetCategories(w http.ResponseWriter, r *http.Request) {
+	categories, err := h.service.GetCategories()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(&categories); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
