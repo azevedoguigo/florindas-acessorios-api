@@ -2,12 +2,14 @@ package repository
 
 import (
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
 	Create(user *domain.User) error
 	FindByEmail(email string) (*domain.User, error)
+	FindByID(id uuid.UUID) (*domain.User, error)
 }
 
 type userRepository struct {
@@ -27,6 +29,16 @@ func (r *userRepository) FindByEmail(email string) (*domain.User, error) {
 
 	err := r.db.Where("email = ?", email).First(&user).Error
 	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *userRepository) FindByID(id uuid.UUID) (*domain.User, error) {
+	var user domain.User
+
+	if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
 		return nil, err
 	}
 
