@@ -55,6 +55,8 @@ func main() {
 
 	router.Route("/clients", func(r chi.Router) {
 		r.Post("/", clientHadler.CreateClient)
+
+		r.With(userMiddlwere.AuthMiddleware).Get("/{id}", clientHadler.GetClientByID)
 	})
 
 	router.Route("/auth", func(r chi.Router) {

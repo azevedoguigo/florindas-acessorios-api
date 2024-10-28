@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/contract"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/repository"
@@ -11,6 +13,7 @@ import (
 
 type ClientService interface {
 	CreateClient(newClientDTO *contract.NewClientDTO) error
+	GetClientByID(id string) (*contract.GetClientResponseDTO, error)
 }
 
 type clientService struct {
@@ -65,4 +68,36 @@ func (s clientService) CreateClient(newClientDTO *contract.NewClientDTO) error {
 	}
 
 	return nil
+}
+
+func (s clientService) GetClientByID(id string) (*contract.GetClientResponseDTO, error) {
+	clientUUID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, errors.New("invalid client ID")
+	}
+
+	client, err := s.clientRepo.FindByID(clientUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.userRepo.FindByID(client.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	clientResponseDTO := &contract.GetClientResponseDTO{
+		ID:          client.ID,
+		UserID:      user.ID,
+		Name:        user.Name,
+		Email:       user.Email,
+		CPF:         client.CPF,
+		UF:          client.UF,
+		CEP:         client.CEP,
+		City:        client.City,
+		Address:     client.Address,
+		PhoneNumber: client.PhoneNumber,
+	}
+
+	return clientResponseDTO, nil
 }
