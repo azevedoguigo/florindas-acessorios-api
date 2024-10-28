@@ -12,4 +12,6 @@ type User struct {
 	Email    string
 	Password string
 	Role     string
+	Admin    Admin
+	Client   Client
 }
