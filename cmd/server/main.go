@@ -81,6 +81,7 @@ func main() {
 
 		r.Get("/", productHandler.GetProducts)
 		r.Get("/{id}", productHandler.GetProductByID)
+		r.Put("/{id}", productHandler.UpdateProduct)
 	})
 
 	log.Println("Server running in port: 3000")

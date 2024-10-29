@@ -2,11 +2,13 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/contract"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/service"
 	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
 )
 
 type ProductHandler struct {
@@ -64,6 +66,26 @@ func (h *ProductHandler) GetProductByID(w http.ResponseWriter, r *http.Request) 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(product); err != nil {
 		http.Error(w, "Error to encode response", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	var updateProductDTO contract.UpdateProductDTO
+	if err := json.NewDecoder(r.Body).Decode(&updateProductDTO); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			http.Error(w, "product not found!", http.StatusNotFound)
+			return
+		}
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := h.service.UpdateProduct(id, &updateProductDTO); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 }
