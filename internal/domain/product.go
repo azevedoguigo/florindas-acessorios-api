@@ -11,7 +11,7 @@ type Product struct {
 	Images      []ProductImage
 	Name        string
 	Description string
-	Price       float64
-	Quantity    uint64
+	Price       *float64
+	Quantity    *uint64
 	CategoryID  uuid.UUID
 }

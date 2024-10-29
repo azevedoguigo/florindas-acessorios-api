@@ -14,6 +14,7 @@ type ProductService interface {
 	CreateProduct(newProductDTO *contract.NewProductDTO) error
 	GetProducts() ([]domain.Product, error)
 	GetProductByID(id string) (*domain.Product, error)
+	UpdateProduct(id string, updateProductDTO *contract.UpdateProductDTO) error
 }
 
 type productService struct {
@@ -42,8 +43,8 @@ func (s productService) CreateProduct(newProductDTO *contract.NewProductDTO) err
 		ID:          uuid.New(),
 		Name:        newProductDTO.Name,
 		Description: newProductDTO.Description,
-		Price:       newProductDTO.Price,
-		Quantity:    newProductDTO.Quantity,
+		Price:       &newProductDTO.Price,
+		Quantity:    &newProductDTO.Quantity,
 		CategoryID:  categoryUUID,
 	}
 
@@ -87,4 +88,21 @@ func (s productService) GetProductByID(id string) (*domain.Product, error) {
 	}
 
 	return product, nil
+}
+
+func (s productService) UpdateProduct(id string, updateProductDTO *contract.UpdateProductDTO) error {
+	productUUID, err := uuid.Parse(id)
+	if err != nil {
+		return errors.New("invalid product ID")
+	}
+
+	if err := pkg.ValidateStruct(updateProductDTO); err != nil {
+		return err
+	}
+
+	if err := s.productRepo.Update(productUUID, updateProductDTO); err != nil {
+		return err
+	}
+
+	return nil
 }
