@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -22,12 +21,6 @@ type DBConfig struct {
 }
 
 func LoadDatabaseConfig() *DBConfig {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("No .env file found!")
-		log.Println("Please, add .env file in root directory.")
-	}
-
 	return &DBConfig{
 		DBHost:     os.Getenv("DB_HOST"),
 		DBUser:     os.Getenv("DB_USER"),
