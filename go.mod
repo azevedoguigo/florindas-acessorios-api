@@ -8,7 +8,7 @@ require (
 	gorm.io/gorm v1.25.12
 )
 
-require github.com/mercadopago/sdk-go v1.0.6 // indirect
+require github.com/mercadopago/sdk-go v1.0.6
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.32.3
