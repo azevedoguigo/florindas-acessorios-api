@@ -20,14 +20,22 @@ func NewProductHandler(service service.ProductService) *ProductHandler {
 }
 
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	var newProduct contract.NewProductDTO
-
-	if err := json.NewDecoder(r.Body).Decode(&newProduct); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	file, header, err := r.FormFile("image")
+	if err != nil {
+		http.Error(w, "fail to read file", http.StatusInternalServerError)
 		return
 	}
+	defer file.Close()
 
-	if err := h.service.CreateProduct(&newProduct); err != nil {
+	newProduct := contract.NewProductDTO{
+		Name:        r.FormValue("name"),
+		Description: r.FormValue("description"),
+		Price:       r.FormValue("price"),
+		Quantity:    r.FormValue("quantity"),
+		CategoryID:  r.FormValue("category_id"),
+	}
+
+	if err := h.service.CreateProduct(file, header.Filename, &newProduct); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
