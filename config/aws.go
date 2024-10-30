@@ -7,7 +7,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/joho/godotenv"
 )
 
 type AWSConfig struct {
@@ -15,12 +14,6 @@ type AWSConfig struct {
 }
 
 func loadConfig() AWSConfig {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("No .env file found!")
-		log.Println("Please, add .env file in root directory.")
-	}
-
 	return AWSConfig{
 		Region: os.Getenv("AWS_REGION"),
 	}

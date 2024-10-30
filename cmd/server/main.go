@@ -9,14 +9,17 @@ import (
 	userMiddlwere "github.com/azevedoguigo/florindas-acessorios-api/internal/middleware"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/repository"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/service"
+	"github.com/azevedoguigo/florindas-acessorios-api/pkg"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 )
 
 func main() {
+	pkg.LoadEnv()
 	db := config.InitDB()
 	s3Client := config.InitAWS()
+	mercadoPagoClient := config.InitMercadoPago()
 
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
@@ -40,6 +43,9 @@ func main() {
 	productHandler := handler.NewProductHandler(productService)
 
 	authHanlder := handler.NewAuthHandler(userService)
+
+	paymentService := service.NewPaymentService(mercadoPagoClient)
+	paymentHandler := handler.NewPaymentHandler(paymentService)
 
 	router := chi.NewRouter()
 
@@ -83,6 +89,12 @@ func main() {
 		r.Get("/", productHandler.GetProducts)
 		r.Get("/{id}", productHandler.GetProductByID)
 		r.Put("/{id}", productHandler.UpdateProduct)
+	})
+
+	router.Route("/payment", func(r chi.Router) {
+		r.Use(userMiddlwere.AuthMiddleware)
+
+		r.Post("/", paymentHandler.Pay)
 	})
 
 	log.Println("Server running in port: 3000")
