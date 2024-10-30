@@ -2,7 +2,11 @@ package service
 
 import (
 	"errors"
+	"mime/multipart"
+	"strconv"
 
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/azevedoguigo/florindas-acessorios-api/internal/aws"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/contract"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/repository"
@@ -11,7 +15,7 @@ import (
 )
 
 type ProductService interface {
-	CreateProduct(newProductDTO *contract.NewProductDTO) error
+	CreateProduct(file multipart.File, filename string, newProductDTO *contract.NewProductDTO) error
 	GetProducts() ([]domain.Product, error)
 	GetProductByID(id string) (*domain.Product, error)
 	UpdateProduct(id string, updateProductDTO *contract.UpdateProductDTO) error
@@ -20,16 +24,26 @@ type ProductService interface {
 type productService struct {
 	productRepo      repository.ProductRepository
 	productImageRepo repository.ProductImageRepository
+	s3Client         *s3.Client
 }
 
-func NewProductService(productRepo repository.ProductRepository, productImageRepo repository.ProductImageRepository) ProductService {
+func NewProductService(
+	productRepo repository.ProductRepository,
+	productImageRepo repository.ProductImageRepository,
+	s3Client *s3.Client,
+) ProductService {
 	return productService{
 		productRepo:      productRepo,
 		productImageRepo: productImageRepo,
+		s3Client:         s3Client,
 	}
 }
 
-func (s productService) CreateProduct(newProductDTO *contract.NewProductDTO) error {
+func (s productService) CreateProduct(
+	file multipart.File,
+	filename string,
+	newProductDTO *contract.NewProductDTO,
+) error {
 	if err := pkg.ValidateStruct(newProductDTO); err != nil {
 		return err
 	}
@@ -39,12 +53,22 @@ func (s productService) CreateProduct(newProductDTO *contract.NewProductDTO) err
 		return errors.New("invalid category ID")
 	}
 
+	price, err := strconv.ParseFloat(newProductDTO.Price, 64)
+	if err != nil {
+		return err
+	}
+
+	quantity, err := strconv.ParseUint(newProductDTO.Price, 10, 64)
+	if err != nil {
+		return err
+	}
+
 	product := &domain.Product{
 		ID:          uuid.New(),
 		Name:        newProductDTO.Name,
 		Description: newProductDTO.Description,
-		Price:       &newProductDTO.Price,
-		Quantity:    &newProductDTO.Quantity,
+		Price:       &price,
+		Quantity:    &quantity,
 		CategoryID:  categoryUUID,
 	}
 
@@ -52,16 +76,21 @@ func (s productService) CreateProduct(newProductDTO *contract.NewProductDTO) err
 		return err
 	}
 
-	for i := 0; i < len(newProductDTO.Images); i++ {
-		productImage := &domain.ProductImage{
-			ID:        uuid.New(),
-			URL:       newProductDTO.Images[i],
-			ProductID: product.ID,
-		}
+	uploader := aws.NewAwsS3(s.s3Client)
 
-		if err := s.productImageRepo.Create(productImage); err != nil {
-			return err
-		}
+	fileURL, err := uploader.Upload(file, filename)
+	if err != nil {
+		return err
+	}
+
+	productImage := &domain.ProductImage{
+		ID:        uuid.New(),
+		URL:       fileURL,
+		ProductID: product.ID,
+	}
+
+	if err := s.productImageRepo.Create(productImage); err != nil {
+		return err
 	}
 
 	return nil

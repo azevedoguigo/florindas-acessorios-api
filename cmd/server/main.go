@@ -16,6 +16,7 @@ import (
 
 func main() {
 	db := config.InitDB()
+	s3Client := config.InitAWS()
 
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
@@ -35,7 +36,7 @@ func main() {
 	productImageRepo := repository.NewProductImageRepository(db)
 
 	productRepo := repository.NewProductRepository(db)
-	productService := service.NewProductService(productRepo, productImageRepo)
+	productService := service.NewProductService(productRepo, productImageRepo, s3Client)
 	productHandler := handler.NewProductHandler(productService)
 
 	authHanlder := handler.NewAuthHandler(userService)
