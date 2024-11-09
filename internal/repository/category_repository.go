@@ -37,7 +37,7 @@ func (r categoryRepository) Get() ([]domain.Category, error) {
 func (r categoryRepository) GetByID(id uuid.UUID) (*domain.Category, error) {
 	var category domain.Category
 
-	if err := r.db.Preload("Products").Where("id = ?", id).First(&category).Error; err != nil {
+	if err := r.db.Preload("Products.Images").Where("id = ?", id).First(&category).Error; err != nil {
 		return nil, err
 	}
 
