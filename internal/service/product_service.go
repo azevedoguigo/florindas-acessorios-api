@@ -58,7 +58,7 @@ func (s productService) CreateProduct(
 		return err
 	}
 
-	quantity, err := strconv.ParseUint(newProductDTO.Price, 10, 64)
+	quantity, err := strconv.ParseUint(newProductDTO.Quantity, 10, 64)
 	if err != nil {
 		return err
 	}
