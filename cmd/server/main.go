@@ -81,10 +81,11 @@ func main() {
 	})
 
 	router.Route("/categories", func(r chi.Router) {
-		r.Use(userMiddlwere.AdminMiddleware)
+		r.Use(userMiddlwere.AuthMiddleware)
 
-		r.Post("/", categoryHandler.CreateCategory)
+		r.With(userMiddlwere.AdminMiddleware).Post("/", categoryHandler.CreateCategory)
 		r.Get("/", categoryHandler.GetCategories)
+		r.Get("/{id}", categoryHandler.GetCategoryByID)
 	})
 
 	router.Route("/products-admin", func(r chi.Router) {

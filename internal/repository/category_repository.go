@@ -2,12 +2,14 @@ package repository
 
 import (
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type CategoryRepository interface {
 	Create(category *domain.Category) error
 	Get() ([]domain.Category, error)
+	GetByID(id uuid.UUID) (*domain.Category, error)
 }
 
 type categoryRepository struct {
@@ -30,4 +32,14 @@ func (r categoryRepository) Get() ([]domain.Category, error) {
 	}
 
 	return categories, nil
+}
+
+func (r categoryRepository) GetByID(id uuid.UUID) (*domain.Category, error) {
+	var category domain.Category
+
+	if err := r.db.Preload("Products").Where("id = ?", id).First(&category).Error; err != nil {
+		return nil, err
+	}
+
+	return &category, nil
 }
