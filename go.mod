@@ -10,6 +10,8 @@ require (
 
 require github.com/mercadopago/sdk-go v1.0.6
 
+require github.com/go-chi/cors v1.2.1 // indirect
+
 require (
 	github.com/aws/aws-sdk-go-v2 v1.32.3
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.6 // indirect

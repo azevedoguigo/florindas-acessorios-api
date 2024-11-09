@@ -13,6 +13,7 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 )
 
 func main() {
@@ -54,6 +55,15 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+
 	router.Route("/admins", func(r chi.Router) {
 		r.Use(userMiddlwere.AdminMiddleware)
 
@@ -71,10 +81,11 @@ func main() {
 	})
 
 	router.Route("/categories", func(r chi.Router) {
-		r.Use(userMiddlwere.AdminMiddleware)
+		r.Use(userMiddlwere.AuthMiddleware)
 
-		r.Post("/", categoryHandler.CreateCategory)
+		r.With(userMiddlwere.AdminMiddleware).Post("/", categoryHandler.CreateCategory)
 		r.Get("/", categoryHandler.GetCategories)
+		r.Get("/{id}", categoryHandler.GetCategoryByID)
 	})
 
 	router.Route("/products-admin", func(r chi.Router) {
