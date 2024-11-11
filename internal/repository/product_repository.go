@@ -39,7 +39,7 @@ func (r productRepository) Get() ([]domain.Product, error) {
 func (r productRepository) GetByID(id uuid.UUID) (*domain.Product, error) {
 	product := domain.Product{ID: id}
 
-	if err := r.db.First(&product).Error; err != nil {
+	if err := r.db.Preload("Images").First(&product).Error; err != nil {
 		return nil, err
 	}
 
