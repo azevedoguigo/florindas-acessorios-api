@@ -43,7 +43,7 @@ func main() {
 	productService := service.NewProductService(productRepo, productImageRepo, s3Client)
 	productHandler := handler.NewProductHandler(productService)
 
-	authHanlder := handler.NewAuthHandler(userService)
+	authHanlder := handler.NewAuthHandler(userService, adminService, clientService)
 
 	paymentService := service.NewPaymentService(mercadoPagoClient)
 	paymentHandler := handler.NewPaymentHandler(paymentService)
@@ -78,6 +78,7 @@ func main() {
 
 	router.Route("/auth", func(r chi.Router) {
 		r.Post("/", authHanlder.Login)
+		r.With(userMiddlwere.AuthMiddleware).Get("/me", authHanlder.Me)
 	})
 
 	router.Route("/categories", func(r chi.Router) {

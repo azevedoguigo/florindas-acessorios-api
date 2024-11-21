@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/contract"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/repository"
@@ -11,6 +13,7 @@ import (
 
 type AdminService interface {
 	CreateAdmin(newAdminDTO *contract.NewAdminDTO) error
+	GetAdminByUserID(userID string) (*contract.GetAdminResponseDTO, error)
 }
 
 type adminService struct {
@@ -59,4 +62,30 @@ func (s adminService) CreateAdmin(newAdminDTO *contract.NewAdminDTO) error {
 	}
 
 	return nil
+}
+
+func (s adminService) GetAdminByUserID(userID string) (*contract.GetAdminResponseDTO, error) {
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		return nil, errors.New("invalid user ID")
+	}
+
+	admin, err := s.adminRepo.FindByUserID(userUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.userRepo.FindByID(admin.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	adminResponseDTO := &contract.GetAdminResponseDTO{
+		ID:     admin.ID,
+		UserID: user.ID,
+		Name:   user.Name,
+		Email:  user.Email,
+	}
+
+	return adminResponseDTO, nil
 }
