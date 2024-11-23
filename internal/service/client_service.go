@@ -20,12 +20,18 @@ type ClientService interface {
 type clientService struct {
 	userRepo   repository.UserRepository
 	clientRepo repository.ClientRepository
+	cartRepo   repository.CartRepository
 }
 
-func NewClientService(userRepo repository.UserRepository, clientRepo repository.ClientRepository) ClientService {
+func NewClientService(
+	userRepo repository.UserRepository,
+	clientRepo repository.ClientRepository,
+	cartRepo repository.CartRepository,
+) ClientService {
 	return clientService{
 		userRepo:   userRepo,
 		clientRepo: clientRepo,
+		cartRepo:   cartRepo,
 	}
 }
 
@@ -64,6 +70,16 @@ func (s clientService) CreateClient(newClientDTO *contract.NewClientDTO) error {
 	}
 
 	err = s.clientRepo.Create(client)
+	if err != nil {
+		return err
+	}
+
+	cart := &domain.Cart{
+		ID:     uuid.New(),
+		UserID: user.ID,
+	}
+
+	err = s.cartRepo.Create(cart)
 	if err != nil {
 		return err
 	}

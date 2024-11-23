@@ -25,12 +25,14 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
 
+	cartRepo := repository.NewCartRepository(db)
+
 	adminRepo := repository.NewAdminRepository(db)
 	adminService := service.NewAdminService(userRepo, adminRepo)
 	adminHandler := handler.NewAdminHandler(adminService)
 
 	clientRepo := repository.NewClientRepository(db)
-	clientService := service.NewClientService(userRepo, clientRepo)
+	clientService := service.NewClientService(userRepo, clientRepo, cartRepo)
 	clientHadler := handler.NewClientHandler(clientService)
 
 	categoryRepo := repository.NewCategoryRepository(db)
