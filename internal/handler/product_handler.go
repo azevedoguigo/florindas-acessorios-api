@@ -78,6 +78,20 @@ func (h *ProductHandler) GetProductByID(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+func (h *ProductHandler) GetMostRecentProducts(w http.ResponseWriter, r *http.Request) {
+	products, err := h.service.GetMostRecentProducts()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(products); err != nil {
+		http.Error(w, "Error to encode response", http.StatusInternalServerError)
+		return
+	}
+}
+
 func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
