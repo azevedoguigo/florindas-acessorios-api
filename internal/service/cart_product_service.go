@@ -12,7 +12,10 @@ import (
 
 type CartProductService interface {
 	CreateCartProduct(newCartProductDTO *contract.NewCartProductDTO) error
-	UpdateCartProductQuantity(updateCartProductQuantityDTO *contract.UpdateCartProductQuantityDTO) error
+	UpdateCartProductQuantity(
+		updateCartProductQuantityDTO *contract.UpdateCartProductQuantityDTO,
+	) error
+	DeleteCartProduct(id string) error
 }
 
 type cartProductService struct {
@@ -81,6 +84,19 @@ func (s *cartProductService) UpdateCartProductQuantity(
 		updateCartProductQuantityDTO.Quantity,
 	)
 	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *cartProductService) DeleteCartProduct(id string) error {
+	cartProductUUID, err := uuid.Parse(id)
+	if err != nil {
+		return errors.New("invalid product ID")
+	}
+
+	if err := s.cartProductRepo.Delete(cartProductUUID); err != nil {
 		return err
 	}
 

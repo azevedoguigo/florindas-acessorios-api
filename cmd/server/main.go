@@ -123,6 +123,7 @@ func main() {
 
 		r.Post("/", cartProductHandler.CreateCartProduct)
 		r.Put("/", cartProductHandler.UpdateCartProductQuantity)
+		r.Delete("/{id}", cartProductHandler.DeleteCartProduct)
 	})
 
 	router.Route("/payment", func(r chi.Router) {

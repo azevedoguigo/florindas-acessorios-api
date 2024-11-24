@@ -6,6 +6,7 @@ import (
 
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/contract"
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/service"
+	"github.com/go-chi/chi/v5"
 )
 
 type CartProductHandler struct {
@@ -41,6 +42,17 @@ func (h *CartProductHandler) UpdateCartProductQuantity(w http.ResponseWriter, r 
 	}
 
 	if err := h.service.UpdateCartProductQuantity(&updateCartProductQuantityDTO); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *CartProductHandler) DeleteCartProduct(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	if err := h.service.DeleteCartProduct(id); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

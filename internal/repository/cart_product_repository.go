@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -9,6 +11,7 @@ import (
 type CartProductRepository interface {
 	Create(cartProduct *domain.CartProduct) error
 	UpdateQuantity(id uuid.UUID, quantity uint64) error
+	Delete(id uuid.UUID) error
 }
 
 type cartProductRepository struct {
@@ -27,4 +30,9 @@ func (r cartProductRepository) UpdateQuantity(id uuid.UUID, quantity uint64) err
 	cartProduct := &domain.CartProduct{ID: id}
 
 	return r.db.Model(&cartProduct).Update("quantity", quantity).Error
+}
+
+func (r cartProductRepository) Delete(id uuid.UUID) error {
+	fmt.Println(id)
+	return r.db.Delete(&domain.CartProduct{}, id).Error
 }
