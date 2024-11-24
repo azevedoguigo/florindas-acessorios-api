@@ -108,6 +108,7 @@ func main() {
 		r.Use(userMiddlwere.AuthMiddleware)
 
 		r.Get("/", productHandler.GetProducts)
+		r.Get("/most-recent", productHandler.GetMostRecentProducts)
 		r.Get("/{id}", productHandler.GetProductByID)
 		r.Put("/{id}", productHandler.UpdateProduct)
 	})
