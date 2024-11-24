@@ -16,18 +16,34 @@ func NewCartProductHandler(service service.CartProductService) *CartProductHandl
 	return &CartProductHandler{service: service}
 }
 
-func (h *CartProductHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var newCartProduct contract.NewCartProductDTO
+func (h *CartProductHandler) CreateCartProduct(w http.ResponseWriter, r *http.Request) {
+	var newCartProductDTO contract.NewCartProductDTO
 
-	if err := json.NewDecoder(r.Body).Decode(&newCartProduct); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&newCartProductDTO); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := h.service.Create(&newCartProduct); err != nil {
+	if err := h.service.CreateCartProduct(&newCartProductDTO); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (h *CartProductHandler) UpdateCartProductQuantity(w http.ResponseWriter, r *http.Request) {
+	var updateCartProductQuantityDTO contract.UpdateCartProductQuantityDTO
+
+	if err := json.NewDecoder(r.Body).Decode(&updateCartProductQuantityDTO); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := h.service.UpdateCartProductQuantity(&updateCartProductQuantityDTO); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

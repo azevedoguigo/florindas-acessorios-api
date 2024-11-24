@@ -121,7 +121,8 @@ func main() {
 	router.Route("/cart-product", func(r chi.Router) {
 		r.Use(userMiddlwere.AuthMiddleware)
 
-		r.Post("/", cartProductHandler.Create)
+		r.Post("/", cartProductHandler.CreateCartProduct)
+		r.Put("/", cartProductHandler.UpdateCartProductQuantity)
 	})
 
 	router.Route("/payment", func(r chi.Router) {

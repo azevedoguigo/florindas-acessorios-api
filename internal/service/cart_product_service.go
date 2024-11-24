@@ -11,7 +11,8 @@ import (
 )
 
 type CartProductService interface {
-	Create(newCartProductDTO *contract.NewCartProductDTO) error
+	CreateCartProduct(newCartProductDTO *contract.NewCartProductDTO) error
+	UpdateCartProductQuantity(updateCartProductQuantityDTO *contract.UpdateCartProductQuantityDTO) error
 }
 
 type cartProductService struct {
@@ -29,7 +30,7 @@ func NewCartProductService(
 	}
 }
 
-func (s *cartProductService) Create(newCartProductDTO *contract.NewCartProductDTO) error {
+func (s *cartProductService) CreateCartProduct(newCartProductDTO *contract.NewCartProductDTO) error {
 	if err := pkg.ValidateStruct(newCartProductDTO); err != nil {
 		return err
 	}
@@ -57,6 +58,29 @@ func (s *cartProductService) Create(newCartProductDTO *contract.NewCartProductDT
 	}
 
 	if err := s.cartProductRepo.Create(cartProduct); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *cartProductService) UpdateCartProductQuantity(
+	updateCartProductQuantityDTO *contract.UpdateCartProductQuantityDTO,
+) error {
+	if err := pkg.ValidateStruct(updateCartProductQuantityDTO); err != nil {
+		return err
+	}
+
+	cartProductUUID, err := uuid.Parse(updateCartProductQuantityDTO.CartProductID)
+	if err != nil {
+		return errors.New("invalid product ID")
+	}
+
+	err = s.cartProductRepo.UpdateQuantity(
+		cartProductUUID,
+		updateCartProductQuantityDTO.Quantity,
+	)
+	if err != nil {
 		return err
 	}
 
