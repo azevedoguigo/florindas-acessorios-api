@@ -30,7 +30,8 @@ func (r cartRepository) FindByUserID(userID uuid.UUID) (*domain.Cart, error) {
 	err := r.db.
 		Preload("CartProducts.Product.Images").
 		Preload(clause.Associations).
-		First(&cart).Error
+		First(&cart).
+		Error
 	if err != nil {
 		return nil, err
 	}
