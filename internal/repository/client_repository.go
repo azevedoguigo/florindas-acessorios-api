@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -35,9 +37,11 @@ func (r clientRepository) FindByID(id uuid.UUID) (*domain.Client, error) {
 }
 
 func (r clientRepository) FindByUserID(userID uuid.UUID) (*domain.Client, error) {
-	client := domain.Client{UserID: userID}
+	var client domain.Client
 
-	if err := r.db.First(&client).Error; err != nil {
+	fmt.Println(userID)
+
+	if err := r.db.Where("user_id = ?", userID).First(&client).Error; err != nil {
 		return nil, err
 	}
 
