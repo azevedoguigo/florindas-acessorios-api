@@ -7,6 +7,7 @@ import (
 
 type Cart struct {
 	gorm.Model
-	ID     uuid.UUID `gorm:"type:uuid;primary_key;"`
-	UserID uuid.UUID
+	ID           uuid.UUID `gorm:"type:uuid;primary_key;"`
+	UserID       uuid.UUID
+	CartProducts []CartProduct `gorm:"foreignKey:CartID"`
 }
