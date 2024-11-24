@@ -46,8 +46,10 @@ func InitDB() *gorm.DB {
 		&domain.Admin{},
 		&domain.Client{},
 		&domain.Category{},
+		&domain.CartProduct{},
 		&domain.Product{},
 		&domain.ProductImage{},
+		&domain.Cart{},
 	)
 
 	return db

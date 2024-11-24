@@ -9,6 +9,7 @@ import (
 type ClientRepository interface {
 	Create(client *domain.Client) error
 	FindByID(id uuid.UUID) (*domain.Client, error)
+	FindByUserID(id uuid.UUID) (*domain.Client, error)
 }
 
 type clientRepository struct {
@@ -27,6 +28,16 @@ func (r clientRepository) FindByID(id uuid.UUID) (*domain.Client, error) {
 	var client domain.Client
 
 	if err := r.db.Where("id = ?", id).First(&client).Error; err != nil {
+		return nil, err
+	}
+
+	return &client, nil
+}
+
+func (r clientRepository) FindByUserID(userID uuid.UUID) (*domain.Client, error) {
+	client := domain.Client{UserID: userID}
+
+	if err := r.db.First(&client).Error; err != nil {
 		return nil, err
 	}
 

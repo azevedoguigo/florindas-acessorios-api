@@ -55,8 +55,6 @@ func AdminMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		claims.Get("role")
-
 		role, ok := claims.Get("role")
 		if !ok || role != "admin" {
 			http.Error(w, "Access denied: Admins Only", http.StatusUnauthorized)

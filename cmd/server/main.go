@@ -25,12 +25,14 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
 
+	cartRepo := repository.NewCartRepository(db)
+
 	adminRepo := repository.NewAdminRepository(db)
 	adminService := service.NewAdminService(userRepo, adminRepo)
 	adminHandler := handler.NewAdminHandler(adminService)
 
 	clientRepo := repository.NewClientRepository(db)
-	clientService := service.NewClientService(userRepo, clientRepo)
+	clientService := service.NewClientService(userRepo, clientRepo, cartRepo)
 	clientHadler := handler.NewClientHandler(clientService)
 
 	categoryRepo := repository.NewCategoryRepository(db)
@@ -43,7 +45,14 @@ func main() {
 	productService := service.NewProductService(productRepo, productImageRepo, s3Client)
 	productHandler := handler.NewProductHandler(productService)
 
-	authHanlder := handler.NewAuthHandler(userService)
+	authHanlder := handler.NewAuthHandler(userService, adminService, clientService)
+
+	cartService := service.NewCartService(cartRepo)
+	cartHandler := handler.NewCartHandler(cartService)
+
+	cartProductRepo := repository.NewCartProductRepository(db)
+	cartProductService := service.NewCartProductService(cartProductRepo, productRepo)
+	cartProductHandler := handler.NewCartProductHandler(cartProductService)
 
 	paymentService := service.NewPaymentService(mercadoPagoClient)
 	paymentHandler := handler.NewPaymentHandler(paymentService)
@@ -78,6 +87,7 @@ func main() {
 
 	router.Route("/auth", func(r chi.Router) {
 		r.Post("/", authHanlder.Login)
+		r.With(userMiddlwere.AuthMiddleware).Get("/me", authHanlder.Me)
 	})
 
 	router.Route("/categories", func(r chi.Router) {
@@ -100,6 +110,20 @@ func main() {
 		r.Get("/", productHandler.GetProducts)
 		r.Get("/{id}", productHandler.GetProductByID)
 		r.Put("/{id}", productHandler.UpdateProduct)
+	})
+
+	router.Route("/cart", func(r chi.Router) {
+		r.Use(userMiddlwere.AuthMiddleware)
+
+		r.Get("/", cartHandler.GetCartByUserID)
+	})
+
+	router.Route("/cart-product", func(r chi.Router) {
+		r.Use(userMiddlwere.AuthMiddleware)
+
+		r.Post("/", cartProductHandler.CreateCartProduct)
+		r.Put("/", cartProductHandler.UpdateCartProductQuantity)
+		r.Delete("/{id}", cartProductHandler.DeleteCartProduct)
 	})
 
 	router.Route("/payment", func(r chi.Router) {
