@@ -50,6 +50,10 @@ func main() {
 	cartService := service.NewCartService(cartRepo)
 	cartHandler := handler.NewCartHandler(cartService)
 
+	cartProductRepo := repository.NewCartProductRepository(db)
+	cartProductService := service.NewCartProductService(cartProductRepo, productRepo)
+	cartProductHandler := handler.NewCartProductHandler(cartProductService)
+
 	paymentService := service.NewPaymentService(mercadoPagoClient)
 	paymentHandler := handler.NewPaymentHandler(paymentService)
 
@@ -112,6 +116,14 @@ func main() {
 		r.Use(userMiddlwere.AuthMiddleware)
 
 		r.Get("/", cartHandler.GetCartByUserID)
+	})
+
+	router.Route("/cart-product", func(r chi.Router) {
+		r.Use(userMiddlwere.AuthMiddleware)
+
+		r.Post("/", cartProductHandler.CreateCartProduct)
+		r.Put("/", cartProductHandler.UpdateCartProductQuantity)
+		r.Delete("/{id}", cartProductHandler.DeleteCartProduct)
 	})
 
 	router.Route("/payment", func(r chi.Router) {
