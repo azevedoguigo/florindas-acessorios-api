@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/mercadopago/sdk-go/pkg/config"
-	"github.com/mercadopago/sdk-go/pkg/payment"
+	"github.com/mercadopago/sdk-go/pkg/preference"
 )
 
-func InitMercadoPago() payment.Client {
+func InitMercadoPago() preference.Client {
 	accessToken := os.Getenv("MERCADO_PAGO_ACCESS_TOKEN")
 
 	cfg, err := config.New(accessToken)
@@ -17,6 +17,6 @@ func InitMercadoPago() payment.Client {
 		return nil
 	}
 
-	client := payment.NewClient(cfg)
+	client := preference.NewClient(cfg)
 	return client
 }

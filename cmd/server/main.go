@@ -128,8 +128,6 @@ func main() {
 	})
 
 	router.Route("/payment", func(r chi.Router) {
-		r.Use(userMiddlwere.AuthMiddleware)
-
 		r.Post("/", paymentHandler.Pay)
 	})
 
