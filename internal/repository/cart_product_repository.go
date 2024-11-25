@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/azevedoguigo/florindas-acessorios-api/internal/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -33,6 +31,5 @@ func (r cartProductRepository) UpdateQuantity(id uuid.UUID, quantity uint64) err
 }
 
 func (r cartProductRepository) Delete(id uuid.UUID) error {
-	fmt.Println(id)
 	return r.db.Delete(&domain.CartProduct{}, id).Error
 }

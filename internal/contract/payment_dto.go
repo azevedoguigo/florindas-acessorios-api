@@ -14,3 +14,13 @@ type PaymentDTO struct {
 		}
 	}
 }
+
+type CreatePreferenceDTO struct {
+	Items []PreferenceItem `json:"items" validate:"required,dive"`
+}
+
+type PreferenceItem struct {
+	Title    string  `json:"title" validate:"required"`
+	Quantity int     `json:"quantity" validate:"required"`
+	Price    float64 `json:"price" validate:"required"`
+}

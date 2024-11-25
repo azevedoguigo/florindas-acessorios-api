@@ -11,6 +11,7 @@ type ProductRepository interface {
 	Create(product *domain.Product) error
 	Get() ([]domain.Product, error)
 	GetByID(id uuid.UUID) (*domain.Product, error)
+	GetMostRecent() ([]domain.Product, error)
 	Update(id uuid.UUID, product *contract.UpdateProductDTO) error
 }
 
@@ -44,6 +45,17 @@ func (r productRepository) GetByID(id uuid.UUID) (*domain.Product, error) {
 	}
 
 	return &product, nil
+}
+
+func (r productRepository) GetMostRecent() ([]domain.Product, error) {
+	products := []domain.Product{}
+
+	err := r.db.Order("created_at DESC").Limit(10).Preload("Images").Find(&products).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
 
 func (r productRepository) Update(id uuid.UUID, dto *contract.UpdateProductDTO) error {

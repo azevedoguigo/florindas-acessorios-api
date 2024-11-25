@@ -108,6 +108,7 @@ func main() {
 		r.Use(userMiddlwere.AuthMiddleware)
 
 		r.Get("/", productHandler.GetProducts)
+		r.Get("/most-recent", productHandler.GetMostRecentProducts)
 		r.Get("/{id}", productHandler.GetProductByID)
 		r.Put("/{id}", productHandler.UpdateProduct)
 	})
@@ -127,8 +128,6 @@ func main() {
 	})
 
 	router.Route("/payment", func(r chi.Router) {
-		r.Use(userMiddlwere.AuthMiddleware)
-
 		r.Post("/", paymentHandler.Pay)
 	})
 

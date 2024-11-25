@@ -17,14 +17,14 @@ func NewPaymentHandler(service service.PaymentService) *PaymentHandler {
 }
 
 func (h *PaymentHandler) Pay(w http.ResponseWriter, r *http.Request) {
-	var paymentDTO contract.PaymentDTO
+	var createPreferenceDTO contract.CreatePreferenceDTO
 
-	if err := json.NewDecoder(r.Body).Decode(&paymentDTO); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&createPreferenceDTO); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	response, err := h.service.Pay(paymentDTO)
+	response, err := h.service.Pay(createPreferenceDTO)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

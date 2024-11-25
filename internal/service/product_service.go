@@ -18,6 +18,7 @@ type ProductService interface {
 	CreateProduct(file multipart.File, filename string, newProductDTO *contract.NewProductDTO) error
 	GetProducts() ([]domain.Product, error)
 	GetProductByID(id string) (*domain.Product, error)
+	GetMostRecentProducts() ([]domain.Product, error)
 	UpdateProduct(id string, updateProductDTO *contract.UpdateProductDTO) error
 }
 
@@ -117,6 +118,15 @@ func (s productService) GetProductByID(id string) (*domain.Product, error) {
 	}
 
 	return product, nil
+}
+
+func (s productService) GetMostRecentProducts() ([]domain.Product, error) {
+	products, err := s.productRepo.GetMostRecent()
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
 
 func (s productService) UpdateProduct(id string, updateProductDTO *contract.UpdateProductDTO) error {
