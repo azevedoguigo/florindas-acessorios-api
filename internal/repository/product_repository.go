@@ -50,7 +50,7 @@ func (r productRepository) GetByID(id uuid.UUID) (*domain.Product, error) {
 func (r productRepository) GetMostRecent() ([]domain.Product, error) {
 	products := []domain.Product{}
 
-	err := r.db.Order("created_at DESC").Limit(10).Preload("Images").Find(&products).Error
+	err := r.db.Order("created_at DESC").Limit(4).Preload("Images").Find(&products).Error
 	if err != nil {
 		return nil, err
 	}

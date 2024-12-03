@@ -2,7 +2,7 @@ package contract
 
 type NewProductDTO struct {
 	Name        string `json:"name" validate:"required,min=2,max=60"`
-	Description string `json:"description" validate:"required,min=2,max=200"`
+	Description string `json:"description" validate:"required,min=2,max=400"`
 	Price       string `json:"price" validate:"required"`
 	Quantity    string `json:"quantity" validate:"required"`
 	CategoryID  string `json:"category_id" validate:"required"`

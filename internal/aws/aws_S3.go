@@ -34,7 +34,6 @@ func (a awsS3) Upload(file multipart.File, filename string) (string, error) {
 		Bucket: aws.String(os.Getenv("AWS_BUCKET_NAME")),
 		Key:    aws.String(filename),
 		Body:   file,
-		ACL:    "public-read",
 	})
 	if err != nil {
 		return "", err
