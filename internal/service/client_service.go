@@ -74,7 +74,6 @@ func (s clientService) CreateClient(newClientDTO *contract.NewClientDTO) error {
 		UF:          newClientDTO.UF,
 		CEP:         newClientDTO.CEP,
 		City:        newClientDTO.City,
-		Address:     newClientDTO.Address,
 		PhoneNumber: newClientDTO.PhoneNumber,
 	}
 
@@ -121,7 +120,6 @@ func (s clientService) GetClientByID(id string) (*contract.GetClientResponseDTO,
 		UF:          client.UF,
 		CEP:         client.CEP,
 		City:        client.City,
-		Address:     client.Address,
 		PhoneNumber: client.PhoneNumber,
 	}
 
@@ -153,7 +151,6 @@ func (s clientService) GetClientByUserID(id string) (*contract.GetClientResponse
 		UF:          client.UF,
 		CEP:         client.CEP,
 		City:        client.City,
-		Address:     client.Address,
 		PhoneNumber: client.PhoneNumber,
 	}
 
