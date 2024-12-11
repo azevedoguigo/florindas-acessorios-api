@@ -9,6 +9,7 @@ import (
 	"github.com/azevedoguigo/florindas-acessorios-api/pkg"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type ClientService interface {
@@ -40,12 +41,20 @@ func (s clientService) CreateClient(newClientDTO *contract.NewClientDTO) error {
 		return err
 	}
 
+	user, err := s.userRepo.FindByEmail(newClientDTO.Email)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return err
+	}
+	if user != nil {
+		return errors.New("email already registred")
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newClientDTO.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
-	user := &domain.User{
+	user = &domain.User{
 		ID:       uuid.New(),
 		Name:     newClientDTO.Name,
 		Email:    newClientDTO.Email,
