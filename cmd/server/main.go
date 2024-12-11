@@ -35,6 +35,10 @@ func main() {
 	clientService := service.NewClientService(userRepo, clientRepo, cartRepo)
 	clientHadler := handler.NewClientHandler(clientService)
 
+	addressRepo := repository.NewAddressRepository(db)
+	addressService := service.NewAddressService(addressRepo)
+	addressHandler := handler.NewAddressHandler(addressService)
+
 	categoryRepo := repository.NewCategoryRepository(db)
 	categoryService := service.NewCategoryService(categoryRepo)
 	categoryHandler := handler.NewCategoryHandler(categoryService)
@@ -83,6 +87,12 @@ func main() {
 		r.Post("/", clientHadler.CreateClient)
 
 		r.With(userMiddlwere.AuthMiddleware).Get("/{id}", clientHadler.GetClientByID)
+	})
+
+	router.Route("/address", func(r chi.Router) {
+		r.Use(userMiddlwere.AuthMiddleware)
+
+		r.Post("/", addressHandler.CreateAddress)
 	})
 
 	router.Route("/auth", func(r chi.Router) {

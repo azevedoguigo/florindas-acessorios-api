@@ -15,4 +15,5 @@ type User struct {
 	Admin    Admin
 	Client   Client
 	Cart     Cart
+	Address  []Address
 }

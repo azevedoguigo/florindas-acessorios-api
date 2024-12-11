@@ -7,7 +7,7 @@ import (
 
 type Client struct {
 	gorm.Model
-	ID          uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
+	ID          uuid.UUID `gorm:"type:uuid;primary_key"`
 	UserID      uuid.UUID
 	CPF         string
 	UF          string

@@ -45,6 +45,7 @@ func InitDB() *gorm.DB {
 		&domain.User{},
 		&domain.Admin{},
 		&domain.Client{},
+		&domain.Address{},
 		&domain.Category{},
 		&domain.CartProduct{},
 		&domain.Product{},
